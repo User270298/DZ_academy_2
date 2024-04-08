@@ -1,0 +1,67 @@
+SELECT COUNT(*) AS num_software_development_instructors
+FROM instructors
+WHERE department = "Software Development";
+
+SELECT COUNT(*) AS num_lectures_by_dave_mcqueen
+FROM lectures
+WHERE instructor_id = (
+  SELECT id
+  FROM instructors
+  WHERE name = "Dave McQueen"
+);
+
+SELECT COUNT(*) AS num_classes_in_room_d201
+FROM classes
+WHERE room_id = (
+  SELECT id
+  FROM rooms
+  WHERE name = "D201"
+);
+
+SELECT r.name AS room_name, COUNT(l.id) AS num_lectures
+FROM rooms r
+JOIN lectures l ON r.id = l.room_id
+GROUP BY r.name;
+
+SELECT COUNT(DISTINCT s.id) AS num_students_in_jack_underhills_lectures
+FROM students s
+JOIN enrollments e ON s.id = e.student_id
+JOIN lectures l ON e.lecture_id = l.id
+WHERE l.instructor_id = (
+  SELECT id
+  FROM instructors
+  WHERE name = "Jack Underhill"
+);
+
+SELECT MIN(num_students) AS min_num_students, MAX(num_students) AS max_num_students
+FROM (
+  SELECT COUNT(*) AS num_students
+  FROM enrollments
+  GROUP BY group_id
+) AS student_counts;
+
+SELECT AVG(funding) AS avg_department_funding
+FROM departments;
+
+SELECT CONCAT(p.first_name, ' ', p.last_name) AS full_name, COUNT(DISTINCT c.name) AS num_courses
+FROM professors p
+JOIN courses c ON p.id = c.professor_id
+GROUP BY full_name;
+
+SELECT day_of_week, COUNT(*) AS num_lectures
+FROM lectures
+GROUP BY day_of_week;
+
+
+SELECT r.room_number, COUNT(DISTINCT d.name) AS num_departments
+FROM rooms r
+JOIN lectures l ON r.id = l.room_id
+JOIN courses c ON l.course_id = c.id
+JOIN departments d ON c.department_id = d.id
+GROUP BY r.room_number;
+
+SELECT f.name, COUNT(DISTINCT c.name) AS num_courses
+FROM faculties f
+JOIN departments d ON f.id = d.faculty_id
+JOIN courses c ON d.id = c.department_id
+GROUP BY f.name;
